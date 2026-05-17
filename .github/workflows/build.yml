@@ -1,0 +1,37 @@
+name: Build Zygisk Module
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Memperbolehkan build manual klik tombol
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Make Gradle Executable
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew assembleRelease
+
+    - name: Upload Modul Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Zygisk-Il2CppDumper-Module
+        path: |
+          out/*
+          **/build/outputs/**/*.zip
